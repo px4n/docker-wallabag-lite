@@ -1,0 +1,24 @@
+language: python
+
+python:
+  - 3.5
+
+services:
+  - docker
+
+env:
+  - DB_TYPE=default
+  - DB_TYPE=sqlite
+
+install:
+  - docker-compose -f tests/docker-compose.$DB_TYPE.yml build
+  - docker-compose -f tests/docker-compose.$DB_TYPE.yml up -d
+
+before_script:
+  - pip install pytest
+  - pip install requests
+
+script:
+  - docker ps | grep -q wallabag
+  - sleep 60
+  - py.test tests/

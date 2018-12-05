@@ -1,0 +1,50 @@
+parameters:
+    database_driver: {{ database_driver }}
+    database_driver_class: {{ database_driver_class }}
+    database_host: {{ database_host }}
+    database_port: {{ database_port }}
+    database_name: {{ database_name }}
+    database_user: {{ database_user }}
+    database_password: {{ database_password }}
+    database_path: "%kernel.root_dir%/../data/db/wallabag.sqlite"
+    database_table_prefix: wallabag_
+    database_socket: null
+    database_charset: {{ database_charset }}
+
+    domain_name: {{ domain_name }}
+
+    mailer_transport:  smtp
+    mailer_host:       {{ mailer_host }}
+    mailer_user:       {{ mailer_user }}
+    mailer_password:   {{ mailer_password }}
+
+    locale:            {{ locale }}
+
+    # A secret key that's used to generate certain security-related tokens
+    secret: {{ secret }}
+
+    # two factor stuff
+    twofactor_auth: true
+    twofactor_sender: {{ from_email }}
+
+    # fosuser stuff
+    fosuser_registration: {{ registration }}
+    fosuser_confirmation: {{ registration_mail_confirmation }}
+
+    from_email: {{ from_email }}
+
+    rss_limit: 50
+
+    # RabbitMQ processing
+    rabbitmq_host: localhost
+    rabbitmq_port: 5672
+    rabbitmq_user: guest
+    rabbitmq_password: guest
+    rabbitmq_prefetch_count: 10
+
+    # Redis processing
+    redis_scheme: tcp
+    redis_host: redis
+    redis_port: 6379
+    redis_path: null
+    redis_password: null

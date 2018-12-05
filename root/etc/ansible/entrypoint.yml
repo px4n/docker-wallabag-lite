@@ -1,0 +1,84 @@
+---
+- hosts: localhost
+  remote_user: root
+
+  vars:
+
+    database_driver: "{{ lookup('env', 'SYMFONY__ENV__DATABASE_DRIVER')|default('pdo_sqlite', true) }}"
+    database_driver_class: "{{ lookup('env', 'SYMFONY__ENV__DATABASE_DRIVER_CLASS')|default('~', true) }}"
+    database_host: "{{ lookup('env', 'SYMFONY__ENV__DATABASE_HOST')|default('127.0.0.1', true) }}"
+    database_name: "{{ lookup('env', 'SYMFONY__ENV__DATABASE_NAME')|default('symfony', true) }}"
+    database_password: "{{ lookup('env', 'SYMFONY__ENV__DATABASE_PASSWORD')|default('~', true) }}"
+    database_port: "{{ lookup('env', 'SYMFONY__ENV__DATABASE_PORT')|default('~', true) }}"
+    database_user: "{{ lookup('env', 'SYMFONY__ENV__DATABASE_USER')|default('root', true) }}"
+    database_charset: "{{ lookup('env', 'SYMFONY__ENV__DATABASE_CHARSET')|default('utf8', true) }}"
+    populate_database: "{{ lookup('env', 'POPULATE_DATABASE')|default(True, true) }}"
+    locale: "{{ lookup('env', 'SYMFONY__ENV__LOCALE')|default('en', true) }}"
+    secret: "{{ lookup('env', 'SYMFONY__ENV__SECRET')|default('ovmpmAWXRCabNlMgzlzFXDYmCFfzGv', true) }}"
+    mailer_host: "{{ lookup('env', 'SYMFONY__ENV__MAILER_HOST')|default('127.0.0.1', true) }}"
+    mailer_user: "{{ lookup('env', 'SYMFONY__ENV__MAILER_USER')|default('~', true) }}"
+    mailer_password: "{{ lookup('env', 'SYMFONY__ENV__MAILER_PASSWORD')|default('~', true) }}"
+    from_email: "{{ lookup('env', 'SYMFONY__ENV__FROM_EMAIL')|default('wallabag@example.com', true) }}"
+    registration: "{{ lookup('env', 'SYMFONY__ENV__FOSUSER_REGISTRATION')|default('true', true) }}"
+    registration_mail_confirmation: "{{ lookup('env', 'SYMFONY__ENV__FOSUSER_CONFIRMATION')|default('true', true) }}"
+    domain_name: "{{ lookup('env', 'SYMFONY__ENV__DOMAIN_NAME')|default('https://your-wallabag-url-instance.com', true) }}"
+
+  tasks:
+
+    - name: needed dirs
+      file:
+        path={{ item }}
+        state=directory
+      with_items:
+        - /var/www/wallabag/app
+        - /var/www/wallabag/app/config
+        - /var/www/wallabag/data
+        - /var/www/wallabag/data/assets
+        - /var/www/wallabag/data/db
+      notify: chown dir
+      tags:
+        - firstrun
+
+    - name: write parameters.yml
+      template:
+        src=templates/parameters.yml.j2
+        dest=/var/www/wallabag/app/config/parameters.yml
+
+    - stat:
+        path=/var/www/wallabag/data/db/wallabag.sqlite
+      register: wallabag_sqlite_db
+      when: database_driver == 'pdo_sqlite'
+
+    - name: notify install for sqlite
+      debug:
+        msg='notify installation script if sqlite db does not exist'
+      changed_when: true
+      notify: run install
+      when: (database_driver == 'pdo_sqlite') and
+            (wallabag_sqlite_db.stat.exists == False)
+
+    - name: remove cache
+      file:
+        path=/var/www/wallabag/var/cache
+        state=absent
+
+    - name: run composer
+      shell: SYMFONY_ENV=prod composer install --no-dev -o --prefer-dist
+      args:
+        chdir: /var/www/wallabag
+      notify: chown dir
+
+  handlers:
+
+    - name: run install
+      shell: php bin/console wallabag:install --env=prod -n
+      args:
+        chdir: /var/www/wallabag
+      notify: chown dir
+
+    - name: chown dir
+      file:
+        path=/var/www/wallabag
+        recurse=yes
+        owner=nobody
+        group=nobody
