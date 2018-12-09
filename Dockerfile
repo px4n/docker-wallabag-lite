@@ -50,6 +50,7 @@ COPY root /
 
 RUN set -ex \
  && cd /var/www/wallabag \
+ && cp /var/www/wallabag/app/config/parameters.yml.dist /var/www/wallabag/app/config/parameters.yml \
  && SYMFONY_ENV=prod composer install --no-dev -o --prefer-dist \
  && chown -R nobody:nobody /var/www/wallabag
 

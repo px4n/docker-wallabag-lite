@@ -12,6 +12,14 @@ parameters:
     database_charset: {{ database_charset }}
 
     domain_name: {{ domain_name }}
+    
+    test_database_driver: pdo_sqlite
+    test_database_host: 127.0.0.1
+    test_database_port: ~
+    test_database_name: ~
+    test_database_user: ~
+    test_database_password: ~
+    test_database_path: "%kernel.root_dir%/../data/db/wallabag_test.sqlite"    
 
     mailer_transport:  smtp
     mailer_host:       {{ mailer_host }}
@@ -33,7 +41,7 @@ parameters:
 
     from_email: {{ from_email }}
 
-    rss_limit: 50
+    rss_limit: {{ rss_limit }}
 
     # RabbitMQ processing
     rabbitmq_host: localhost
