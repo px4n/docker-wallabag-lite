@@ -12,6 +12,7 @@ RUN set -ex \
       curl \
       git \
       libwebp \
+      nginx \
       pcre \
       php7 \
       php7-amqp \
@@ -41,7 +42,8 @@ RUN set -ex \
       s6 \
       tar \
  && rm -rf /var/cache/apk/* \
- && ln -sf /dev/stderr /var/log/php-fpm.log \
+ && ln -sf /dev/stdout /var/log/nginx/access.log \
+ && ln -sf /dev/stderr /var/log/nginx/error.log \
  && curl -s https://getcomposer.org/installer | php \
  && mv composer.phar /usr/local/bin/composer \
  && git clone --branch $WALLABAG_VERSION --depth 1 https://github.com/wallabag/wallabag.git /var/www/wallabag
@@ -54,6 +56,6 @@ RUN set -ex \
  && SYMFONY_ENV=prod composer install --no-dev -o --prefer-dist \
  && chown -R nobody:nobody /var/www/wallabag
 
-EXPOSE 9000
+EXPOSE 80
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["wallabag"]

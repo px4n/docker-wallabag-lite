@@ -17,7 +17,7 @@
     database_charset: "{{ lookup('env', 'SYMFONY__ENV__DATABASE_CHARSET')|default('utf8', true) }}"
     populate_database: "{{ lookup('env', 'POPULATE_DATABASE')|default(True, true) }}"
     locale: "{{ lookup('env', 'SYMFONY__ENV__LOCALE')|default('en', true) }}"
-    secret: "{{ lookup('env', 'SYMFONY__ENV__SECRET')|default('C3C8vfSm1zkG84afyDLSyyXxteXA4', true) }}"
+    secret: "{{ lookup('env', 'SYMFONY__ENV__SECRET')|default('C3C8vfSm1zkG84afyDLSyyXxteXA4', true) }}" #only use alphanumberic
     mailer_host: "{{ lookup('env', 'SYMFONY__ENV__MAILER_HOST')|default('127.0.0.1', true) }}"
     mailer_user: "{{ lookup('env', 'SYMFONY__ENV__MAILER_USER')|default('~', true) }}"
     mailer_password: "{{ lookup('env', 'SYMFONY__ENV__MAILER_PASSWORD')|default('~', true) }}"
