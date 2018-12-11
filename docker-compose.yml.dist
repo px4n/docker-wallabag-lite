@@ -1,0 +1,26 @@
+version: "3.5"
+
+volumes:
+  wallabag_data:
+    driver: local
+volumes:
+  wallabag_images:
+    driver: local
+
+services:
+  wallabag:
+    image: px4n/wallabag-lite:latest
+    container_name: wallabag
+    restart: always
+    environment:
+      - SYMFONY__ENV__SECRET=Y36pscsOIRzyb61DxRqf8OH0
+      - SYMFONY__ENV__MAILER_HOST=127.0.0.1:25
+      - SYMFONY__ENV__MAILER_USER=~
+      - SYMFONY__ENV__MAILER_PASSWORD=~
+      - SYMFONY__ENV__FROM_EMAIL=no-reply@wallabag.org
+      - SYMFONY__ENV__FOSUSER_REGISTRATION=false
+      - SYMFONY__ENV__FOSUSER_CONFIRMATION=false
+      - SYMFONY__ENV__DOMAIN_NAME=https://localhost:1314
+    volumes:
+      - wallabag_data:/var/www/wallabag/data
+      - wallabag_images:/var/www/wallabag/web/assets/images
