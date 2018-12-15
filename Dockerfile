@@ -2,7 +2,7 @@ FROM alpine:latest
 
 LABEL maintainer "Patrick O. S. Kuti <patrick.kuti@px4n.net>"
 
-ARG WALLABAG_VERSION=2.3.4
+ARG WALLABAG_VERSION=2.3.5
 
 RUN set -ex \
  && apk update \
